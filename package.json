@@ -1,0 +1,22 @@
+{
+  "name": "index.js",
+  "version": "1.0.0",
+  "description": "codigo base de datos: mongoDB y NodeJS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lax27/M02UF4_DB_Node.git"
+  },
+  "author": "Alex T",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/lax27/M02UF4_DB_Node/issues"
+  },
+  "homepage": "https://github.com/lax27/M02UF4_DB_Node#readme",
+  "dependencies": {
+    "mongodb": "^5.0.0"
+  }
+}

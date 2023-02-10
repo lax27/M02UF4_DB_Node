@@ -3,7 +3,7 @@
 //##!/usr/bin/env node
 const http = require('http');
 const { MongoClient } = require('mongodb');
-
+const fs = require('fs');
 // or as an es module:
 // import { MongoClient } from 'mongodb'
 
@@ -51,18 +51,24 @@ function SendCharacters(response) {
 }
 
 function sendAge(response,url){
+
 	if(url.length < 3 ){
-		response.write("ERROR:edad erronea");
+		response.write("ERROR: introduce un personaje");
 		response.end();
 		return;
 	}
+
 	let collection = db.collection('characters');
-	collection.find({"name":url[2]}).toArray().then(character => {
-		let data = {			
-			p
-			age: character[0].age
-		};
-		response.write(JSON.stringify(data));
+
+	collection.find({"name":url[2]}).project({_id:0,age:1}).toArray().then(character => {
+	if (character.length == 0){	
+	response.write("ERROR: edad erronea");
+	response.end();	
+	return;
+ }
+
+		
+		response.write(JSON.stringify(character[0]));
 		response.end();
 	});
 }
@@ -87,9 +93,19 @@ let http_server = http.createServer(function(request,response){
 				break;
 
 			default:
-				response.write("Pagina Principal")
+				fs.readFile("index.html", function(err, data){
+				if (err){
+					console.error(err);
+					response.writeHead(404'Content-Type':'text/html'});
+					response.write("Error 404: el archivo no esta en este castillo");
+					response.end();
+					return;
+				}
+
+				response.writeHead(200,{'Content-Type':'text/html'});
+				response.write(data)
 		 		response.end();	
-				
+				});
 		}
 		
 	});	

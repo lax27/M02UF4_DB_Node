@@ -72,7 +72,30 @@ function sendAge(response,url){
 		response.end();
 	});
 }
- 
+
+function SendItems(response,url) { 
+/*
+	if(url[2] == ){
+	let interCollection = db.collection('items_characters');
+	response.end();
+	}
+*/	
+let collection = db.collection('items');
+collection.find({}).toArray().then(characters => {
+ let names = [];
+ for(let i = 0; i < characters.length; i++){
+  names.push(characters[i].name);
+  }
+  response.write(JSON.stringify(names));
+   response.end();
+    });
+}
+
+
+
+
+
+
 
 let http_server = http.createServer(function(request,response){
 	if(request.url == "/favicon.ico"){
@@ -91,12 +114,14 @@ let http_server = http.createServer(function(request,response){
 			case "age":
 				sendAge(response,url);
 				break;
-
+			case "items":
+				SendItems(response,url);
+				break;
 			default:
 				fs.readFile("index.html", function(err, data){
 				if (err){
 					console.error(err);
-					response.writeHead(404'Content-Type':'text/html'});
+					response.writeHead(404,{'Content-Type':'text/html'});
 					response.write("Error 404: el archivo no esta en este castillo");
 					response.end();
 					return;

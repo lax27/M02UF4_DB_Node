@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="UTF-8" />
 <title>ENTIerrame</title>
 </head>
 <body>
@@ -20,12 +21,20 @@
 </header>
 <main id="container">
 </main>
+
+<form action="/character_form" method="POST">
+<h2>Añadir personaje</h2>
+<p><label for="character-name">Nombre</label><input type="text" name="name" id="character-name" /></p>
+<p><label for="character-age">Edad</label><input type="text" name="age" id="character-age" /></p>
+<P><input type="submit" value="¡Añadir personaje!" /></p>
+</form>
+
 <script>
 function getCharacters ()
 {
 
 
-	fetch("http://10.40.1.230:8080/characters")
+	fetch("/characters")
 			.then(response => response.json())
 			.then(characters => {
 
@@ -41,7 +50,7 @@ function getCharacters ()
 
 function getItems(){
 	
-	fetch("http://10.40.1.230:8080/items")
+	fetch("/items")
 		.then(response => response.json())
 		.then(items => {
 			 let list = "<ul>";

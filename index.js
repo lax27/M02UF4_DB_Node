@@ -4,6 +4,7 @@
 const http = require('http');
 const { MongoClient } = require('mongodb');
 const fs = require('fs');
+const qs = require('querystring');
 // or as an es module:
 // import { MongoClient } from 'mongodb'
 
@@ -72,14 +73,73 @@ function sendAge(response,url){
 		response.end();
 	});
 }
-
-function SendItems(response,url) { 
 /*
-	if(url[2] == ){
-	let interCollection = db.collection('items_characters');
+function  sendCharactersItems(url,response){
+
+let name = ure[2].trim();
+if (name == ""){
+response.write("ERROR: URL mal formada");
+response.end;
+return;
+}
+
+let collection = db.collection('characters');
+collection.find({"name":name}).toArray().then(character =>{	
+	if(character.length != 1){
+	response.write("ERROR: el personaje "+name+" no existe");
 	response.end();
+	return;
 	}
-*/	
+
+		let id_ch =	character[0].id_character;	
+
+		let collection = db.collection('items_characters');
+	
+		collection.find({"id_character":id_ch}).toArray().then(ids => {
+			
+				if (ids.length == 0){
+					response.write("[]");
+					response.end();
+					return;
+				}
+
+
+				let ids_items = [];
+				ids.forEach(element => {
+				ids_items.push(element.ids);
+				});
+
+				let collection = db.collection('items');
+				collection.find({"id":{$in ids_items}}).toArray().then(items => {
+						
+					response.write(JSON.stringify(id_items));
+					response.end();
+
+					return;
+	
+					
+
+				});
+		});
+});
+} */
+
+
+
+
+
+
+
+
+function SendItems(response,url) {
+if(url.length >= 3 ){
+sendCharactersItems(url,response);
+
+return;
+}
+
+
+
 let collection = db.collection('items');
 collection.find({}).toArray().then(characters => {
  let names = [];
@@ -91,7 +151,48 @@ collection.find({}).toArray().then(characters => {
     });
 }
 
+function insertCharacter (request, response){
+	
+	if (request.method != "POST"){
+		response.write("ERROR: Formulario no enviado");
+		response.end();
+		return;
+	}
+	
+	let data = "";
 
+	request.on('data', function(character_chunk){
+		data += character_chunk;
+	});
+
+	request.on('end', function() { 
+		console.log(data);
+
+		let info = qs.parse(data);
+		console.log(info);
+		
+		let collection = db.collection('characters');
+		if (info.name == undefined) {
+			response.write("ERROR: Nombre no definido");
+			response.end();
+			return;
+		}
+
+		 if (info.name == undefined) {
+		 	response.write("ERROR: Nombre no definido");
+		 	 response.end();
+		     return;
+		 }
+
+		 let insert_info = { name: info.name, age: parseInt(info.age)};
+
+		collection.insertOne(insert_info); //hay dos maneras de acceder a los valores de info 
+		
+		response.write("nuevo personaje insertado: " +  insert_info.name);
+
+		response.end();
+	});
+}
 
 
 
@@ -117,6 +218,11 @@ let http_server = http.createServer(function(request,response){
 			case "items":
 				SendItems(response,url);
 				break;
+
+			case"character_form":
+				insertCharacter(request, response);
+				break;
+
 			default:
 				fs.readFile("index.html", function(err, data){
 				if (err){
